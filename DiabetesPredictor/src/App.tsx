@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import "./assets/stylesheets/App.css"
+import Form from './Form'
 
 function App() {
 
   return (
     <main>
-      hi
+      <Form/>
     </main>
   )
 }
