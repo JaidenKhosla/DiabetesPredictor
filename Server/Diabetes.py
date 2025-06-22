@@ -144,8 +144,9 @@ class PolynomialModel(Model):
 class Models:
 
     #model initialization
+    
     models: dict[str, Model] = {}
-    model_locks: dict[str, threading.Lock] # type: ignore
+    model_locks: dict[str, threading.Lock] = {}
 
 
     #linear model
@@ -208,19 +209,17 @@ class Models:
         except Exception as e:
             print(f"Error initializing Poly model: {e}")
 
-Models.threads = {    
-    "linear" : threading.Thread(target=Models.linear_init),
-    "logistic" : threading.Thread(target=Models.logistic_init),
-    "random_forest" : threading.Thread(target=Models.random_forest_init),
-    # "svc_linear" : threading.Thread(target=svc_linear_init),
-     # "svc_poly" : threading.Thread(target=svc_poly_init),
-    "poly" : threading.Thread(target=Models.poly_init)
+
+Models.model_locks = {k: threading.Lock() for k in ["linear", "logistic", "random_forest", "poly"]}
+Models.threads = {
+    "linear": threading.Thread(target=Models.linear_init),
+    "logistic": threading.Thread(target=Models.logistic_init),
+    "random_forest": threading.Thread(target=Models.random_forest_init),
+    "poly": threading.Thread(target=Models.poly_init)
 }
-
-Models.model_locks = {k : threading.Lock() for k in Models.threads}
-
 for thread in Models.threads.values():
     thread.start()
+
 
 
 # In[14]:

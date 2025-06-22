@@ -6,6 +6,8 @@ from flask_cors import CORS
 
 from Diabetes import Predictor, Models
 
+import tracemalloc
+
 app = Flask(__name__)
 CORS(app)
 
@@ -36,7 +38,9 @@ def generate():
                 print("DataFrame after convert_binary_values:", predictModel.dataframe)
                 predictModel = predictModel.add_model(Models.models[model])
                 res = [float(predictModel.predict()[0]), float(predictModel.predict_proba()[0])]
+                
                 return jsonify({"result": res})
+
         except Exception as e:
              import traceback
              traceback.print_exc()
@@ -47,4 +51,4 @@ def ping():
      return "pong"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False, use_reloader=False)
