@@ -114,8 +114,8 @@ export default function Form() {
             if(!debounce)
                 sendReq(formData);
         }}>Do I have Diabetes?</button>
-        <p>{hasDiabetes[0] === -1 ? "" : hasDiabetes[0] === 0 ? "You don't have diabetes." : "you have diebetes"}</p>
-        <p>{hasDiabetes[0] === -1 ? "" : hasDiabetes[0] === 0 ? `With a ${(1-Number(hasDiabetes[1]))*100}% accuracy.` : `With a ${Number(hasDiabetes[1])*100}% accuracy.`}</p>
+        <p>{hasDiabetes[0] === -1 ? "" : hasDiabetes[0] === 0 ? "You don't have diabetes." : "You have diabetes."}</p>
+        <p>{hasDiabetes[0] === -1 ? "" : hasDiabetes[0] === 0 ? `With a ${((1-Number(hasDiabetes[1]))*100).toFixed(3)}% accuracy.` : `With a ${(Number(hasDiabetes[1])*100).toFixed(3)}% accuracy.`}</p>
     </div>
 
 
