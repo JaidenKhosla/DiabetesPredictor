@@ -1,12 +1,14 @@
-import React from 'react';
+import React from "react";
 import "./assets/stylesheets/Form.css"
 
+type modelType = "linear" | "logistic" | "randomForest" | "polynomial";
+
 interface FormData {
-    gender: string;
+    gender: "Male" | "Female" | "Other";
     age: number;
     hypertension: number;
     heart_disease: number;
-    smoking_history: string;
+    smoking_history: "former" | "current" | "unknown" | "no info";
     bmi: number;
     HbA1c_level: number;
     blood_glucose_level: number;
@@ -20,33 +22,38 @@ const initialForm: FormData = {
     smoking_history: "former",
     bmi: 34,
     HbA1c_level: 34,
-    blood_glucose_level: 34
+    blood_glucose_level: 34,
 }
 
 export default function Form() {
 
-    const [formData, setFormData] = React.useState<FormData>(initialForm); 
+    const [formData, setFormData] = React.useState<FormData>(initialForm);
+    const [useModel, setModel] = React.useState<modelType>("randomForest") 
     const [hasDiabetes, setHasDiabetes] = React.useState<Number>(-1);
+    const [debounce, setDebounce] = React.useState<boolean>(false);
     function sendReq(data: FormData){
 
         console.log(JSON.stringify(data));
-
+        setDebounce(true);
         fetch("http://127.0.0.1:5000/generate", {
             method: "POST",
             headers: {
                 "Content-Type" : "application/json"
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify({"features": formData, "model": useModel})
         }).then(async response => {
             if(!response.ok)
                 console.log(await response.status)
-           const res = await response.json();
-           setHasDiabetes(res.result);
+            const res = await response.json();
+            setHasDiabetes(res.result[0]);
         }).then((data)=>{
             console.log("Success!", data)
+            setDebounce(false);
         }).catch(err => {
             console.error(err);
+            setDebounce(false);
         });
+        
     }
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -70,7 +77,7 @@ export default function Form() {
             <option value="Other">Other</option>
         </select>
         <label htmlFor='age'>Age</label>
-        <input type='number' name='age' value={formData.age} placeholder='Age' onChange={handleChange}/>
+        <input type='number' name='age' value={formData.age} placeholder='Age' onChange={handleChange} min={0}/>
         <label htmlFor='hypertension'>Hypertension</label>
         <select name='hypertension' value={formData.hypertension} onChange={handleChange}>
             <option value={0}>No</option>
@@ -91,13 +98,20 @@ export default function Form() {
         <label htmlFor='bmi'>BMI</label>
         <input type='number' name='bmi' placeholder='BMI' value={formData.bmi} step='0.01' onChange={handleChange}/>
         <label htmlFor='HbA1c_level'>HbA1c Level</label>
-        <input type='number' name='HbA1c_level' placeholder='HbA1c Level' value={formData.HbA1c_level} step='0.01' onChange={handleChange}/>
+        <input type='number' name='HbA1c_level' placeholder='HbA1c Level' value={formData.HbA1c_level} step='0.01' onChange={handleChange} min={0}/>
         <label htmlFor='blood_glucose_level'>Blood Glucose Level</label>
-        <input type='number' name='blood_glucose_level' placeholder='Blood Glucose Level' step='0.01' value={formData.blood_glucose_level} onChange={handleChange}/>
+        <input type='number' name='blood_glucose_level' placeholder='Blood Glucose Level' step='0.01' value={formData.blood_glucose_level} onChange={handleChange} min={0}/>
+        <label htmlFor="model">Model</label>
+        <select name='model' value={useModel} onChange={(e)=>{setModel(e.target.value as modelType)}}>
+            <option value="linear">Linear Regression</option>
+            <option value="logistic">Logistic Regression</option>
+            <option value="randomForest">Random Forest Regression</option>
+            <option value="polynomial">Polynomial Regression</option>
+        </select>
         <br></br>
-        <button onClick={()=>{
-
-            sendReq(formData);
+        <button disabled={debounce} onClick={()=>{
+            if(!debounce)
+                sendReq(formData);
         }}>Do I have Diabetes?</button>
         <p>{hasDiabetes === -1 ? "" : hasDiabetes === 0 ? "You don't have diabetes." : "you have diebetes"}</p>
     </div>
