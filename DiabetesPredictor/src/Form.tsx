@@ -29,7 +29,7 @@ export default function Form() {
 
     const [formData, setFormData] = React.useState<FormData>(initialForm);
     const [useModel, setModel] = React.useState<modelType>("randomForest") 
-    const [hasDiabetes, setHasDiabetes] = React.useState<Number>(-1);
+    const [hasDiabetes, setHasDiabetes] = React.useState<Number[]>([-1,-1]);
     const [debounce, setDebounce] = React.useState<boolean>(false);
     function sendReq(data: FormData){
 
@@ -45,13 +45,14 @@ export default function Form() {
             if(!response.ok)
                 console.log(await response.status)
             const res = await response.json();
-            setHasDiabetes(res.result[0]);
+            setHasDiabetes(res.result);
         }).then((data)=>{
             console.log("Success!", data)
             setDebounce(false);
         }).catch(err => {
             console.error(err);
             setDebounce(false);
+            set
         });
         
     }
@@ -113,7 +114,8 @@ export default function Form() {
             if(!debounce)
                 sendReq(formData);
         }}>Do I have Diabetes?</button>
-        <p>{hasDiabetes === -1 ? "" : hasDiabetes === 0 ? "You don't have diabetes." : "you have diebetes"}</p>
+        <p>{hasDiabetes[0] === -1 ? "" : hasDiabetes[0] === 0 ? "You don't have diabetes." : "you have diebetes"}</p>
+        <p>{hasDiabetes[0] === -1 ? "" : hasDiabetes[0] === 0 ? `With a ${(1-Number(hasDiabetes[1]))*100}% accuracy.` : `With a ${Number(hasDiabetes[1])*100}% accuracy.`}</p>
     </div>
 
 

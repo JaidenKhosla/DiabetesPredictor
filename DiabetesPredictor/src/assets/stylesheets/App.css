@@ -24,3 +24,7 @@
 .App > h1 {
     font-size: 3rem;
 }
+
+body{
+    background-color: rebeccapurple;
+}
