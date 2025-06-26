@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:08c9b49dcc79f7e3617cb631d2752307fc965c46e04d095e76e22ec3ab0236a4
-size 273
+# DiabetesPredictor
+An app that predicts diabetes using machine learning.
+
+To get everything to work, you have to first run the backend file, which is in Server/Diabetes.ipynb. Click run all.
+To get the frontend working, type "cd DiabetesPredictor" then type "npm run dev".

@@ -1,3 +1,32 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1b20ec2900c5bf67680ad815ae614501a4cc73ff72fba9acd79a6737016a20d9
-size 503
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    font-size: clamp(8px, 1.25vw, 20px);
+    overflow-x: hidden;
+    color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.App {
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+
+    background-color: #154c79;
+    
+    width: 100vw;
+}
+
+.App > h1 {
+    font-size: 6rem;
+}
+
+body{
+    background-color: #154c79;
+}
