@@ -79,3 +79,10 @@ class PolynomialModel(Model):
     
     def predict(self, features: Union[Sequence[Sequence[float]], np.array]):
         return self.model.predict(self.poly.transform(features))
+
+def save_to_pickle(key: str, model, path: str="../Server/models/Diabetes/"):
+
+    print(key)
+    print(path)
+    print(f"{model}{key}.pkl")
+    pickle.dump(model, open(f"{path}{key}.pkl", "wb"))
