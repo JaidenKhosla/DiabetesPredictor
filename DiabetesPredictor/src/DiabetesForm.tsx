@@ -1,7 +1,7 @@
 import React from "react";
 import "./assets/stylesheets/Form.css"
 
-type modelType = "linear" | "logistic" | "randomForest" | "polynomial";
+type modelType = "Linear" | "Logistic" | "RandomForest" | "Polynomial";
 
 interface FormData {
     gender: "Male" | "Female" | "Other";
@@ -25,10 +25,10 @@ const initialForm: FormData = {
     blood_glucose_level: 34,
 }
 
-export default function Form() {
+export default function DiabetesForm() {
 
     const [formData, setFormData] = React.useState<FormData>(initialForm);
-    const [useModel, setModel] = React.useState<modelType>("randomForest") 
+    const [useModel, setModel] = React.useState<modelType>("RandomForest") 
     const [hasDiabetes, setHasDiabetes] = React.useState<Number[]>([-1,-1]);
     const [debounce, setDebounce] = React.useState<boolean>(false);
     function sendReq(data: FormData){
@@ -40,7 +40,7 @@ export default function Form() {
             headers: {
                 "Content-Type" : "application/json"
             },
-            body: JSON.stringify({"features": formData, "model": useModel})
+            body: JSON.stringify({"features": formData, "model": useModel, "category": "Diabetes"})
         }).then(async response => {
             if(!response.ok)
                 console.log(await response.status)
@@ -104,10 +104,10 @@ export default function Form() {
         <input type='number' name='blood_glucose_level' placeholder='Blood Glucose Level' step='0.01' value={formData.blood_glucose_level} onChange={handleChange} min={0}/>
         <label htmlFor="model">Model</label>
         <select name='model' value={useModel} onChange={(e)=>{setModel(e.target.value as modelType)}}>
-            <option value="linear">Linear Regression</option>
-            <option value="logistic">Logistic Regression</option>
-            <option value="randomForest">Random Forest Regression</option>
-            <option value="polynomial">Polynomial Regression</option>
+            <option value="Linear">Linear Regression</option>
+            <option value="Logistic">Logistic Regression</option>
+            <option value="RandomForest">Random Forest Regression</option>
+            <option value="Polynomial">Polynomial Regression</option>
         </select>
         <br></br>
         <button disabled={debounce} onClick={()=>{

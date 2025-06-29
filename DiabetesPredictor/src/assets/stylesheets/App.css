@@ -30,3 +30,14 @@
 body{
     background-color: #154c79;
 }
+
+.tabs > button {
+    padding: 1.5rem;
+    border: none;
+    background-color:#174870;
+    color: white;
+}
+
+.tabs > button.active {
+    background-color: #123e61;
+}

@@ -85,10 +85,9 @@ class Predictor:
             self.dataframe[encoder] = encoders[self.category][encoder].transform(self.dataframe[encoder])
 
         if self.category == "HeartDisease":
-            self.dataframe = pd.get_dummies(dataframe=self.dataframe, columns=["sex"])
-            self.dataframe["sex_0"] = self.dataframe["sex_0"].astype("int")
-            self.dataframe["sex_1"] = self.dataframe["sex_1"].astype("int")
-
+            self.dataframe["sex_0"] = [1 if self.dataframe["sex"].astype("int")[0] == 0 else 0]
+            self.dataframe["sex_1"] = [1 if self.dataframe["sex"].astype("int")[0] == 1 else 0]
+            self.dataframe = self.dataframe.drop(columns=["sex"])
         return self
 
     def add_model(self, category: str, model_key: str):

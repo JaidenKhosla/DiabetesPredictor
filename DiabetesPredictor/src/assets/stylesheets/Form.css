@@ -16,3 +16,7 @@
     border-radius: 0.5rem;
     justify-self: center;
 }
+
+.Form > button {
+    width: fit-content;
+}
