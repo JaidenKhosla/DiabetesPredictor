@@ -9,7 +9,8 @@ from Model import *
 from sklearn.preprocessing import LabelEncoder
 
 from flask import Flask
-import flask_cors
+from flask import request
+from flask_cors import CORS
 
 parentDirectory = "./Server/models/"
 encoderDirectory = "./Server/encoders/"
@@ -41,7 +42,7 @@ for directory in list(os.walk(encoderDirectory))[1:]:
     
     encoders[parsedDirectory] = {}
     pklFiles = directory[2]
-    print(directory)
+
     for pklFile in pklFiles:
         pklFilePath = f"{directoryName}/{pklFile}"
 
@@ -63,8 +64,8 @@ class Predictor:
         return self.model.predict(self.dataframe)
     
     def predict_proba(self):
-        if(hasattr(self.model.model, "predict_proba")):
-            return [self.model.model.predict_proba(self.dataframe)[0][1]]
+        if(hasattr(self.model, "predict_proba")):
+            return [self.model.predict_proba(self.dataframe)[0][1]]
         else:
             return self.predict()
     
@@ -80,7 +81,13 @@ class Predictor:
     def convert_binary_values(self):
         
         for encoder in encoders[self.category]:
-            self.dataframe[encoder] = encoder[self.category][encoder].transform(self.dataframe[encoder])
+            print(encoder)
+            self.dataframe[encoder] = encoders[self.category][encoder].transform(self.dataframe[encoder])
+
+        if self.category == "HeartDisease":
+            self.dataframe = pd.get_dummies(dataframe=self.dataframe, columns=["sex"])
+            self.dataframe["sex_0"] = self.dataframe["sex_0"].astype("int")
+            self.dataframe["sex_1"] = self.dataframe["sex_1"].astype("int")
 
         return self
 
@@ -90,3 +97,57 @@ class Predictor:
         self.model_key = model_key
         return self
     
+
+
+app = Flask(__name__)
+CORS(app)
+
+"""
+{
+category: "HeartDisease",
+model: "Linear",
+
+}
+"""
+
+@app.route("/generate", methods=["POST"])
+def generate():
+    clientJson = request.json
+
+    category = clientJson["category"]
+    model = clientJson["model"]
+    features = clientJson["features"]
+
+    if(models.get(category, None) == None):
+        return jsonify({"result": f"The {category} category doesn't exist."})
+
+    if(models[category].get(model, None) == None):
+        return jsonify({"result": f"The {model} model doesn't exist."})
+
+    currModel = Predictor.json_to_frame(features).add_model(category, model).convert_binary_values()
+
+    prediction = float(currModel.predict()[0])
+    probability = float(currModel.predict_proba()[0])
+
+    return jsonify({"result": [prediction, probability]})
+if __name__ == "__main__":
+    app.run()
+
+# req = {
+#     "category": "Diabetes",
+#     "model": "Logistic",
+#     "features" : {
+#         "gender" : "Male",
+#         "age" : 12.0,
+#         "hypertension": 1,
+#         "heart_disease": 1,
+#         "smoking_history": "current",
+#         "bmi" : 23.86,
+#         "HbA1c_level": 4.8,
+#         "blood_glucose_level": 157.0
+#     }
+# }
+
+ 
+
+# print(Predictor.json_to_frame(req["features"]).add_model(req["category"], req["model"]).convert_binary_values().predict())
